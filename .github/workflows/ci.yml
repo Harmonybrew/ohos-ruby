@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  release:
+    types: [created]
+  push:
+    branches: [ "main" ]
+
+permissions: write-all
+
+jobs:
+  build-deps:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Build
+        run: ./build-deps.sh 
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: deps
+          path: /opt/*-ohos-arm64.tar.gz
+  build-ruby:
+    needs: build-deps
+    runs-on: ubuntu-24.04-arm
+    container:
+      image: ghcr.io/hqzing/docker-openharmony-rootfs:latest
+      volumes:
+        - /tmp/node20:/__e/node20:rw,rshared
+    steps:
+      - name: Setup node for actions
+        run: |
+          curl -L -O https://github.com/hqzing/build-ohos-node/releases/download/v24.2.0/node-v24.2.0-openharmony-arm64.tar.gz
+          mkdir /__e/node20/bin
+          tar -zxf node-v24.2.0-openharmony-arm64.tar.gz -C /opt
+          ln -s /opt/node-v24.2.0-openharmony-arm64/bin/node /__e/node20/bin/node
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Download artifact
+        uses: actions/download-artifact@v5
+        with:
+          name: deps
+      - name: Build
+        run: ./build-ruby.sh
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ruby
+          path: /opt/ruby-3.4.5-ohos-arm64.tar.gz
+  release:
+    needs: build-ruby
+    if: github.event_name == 'release'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Download artifact
+        uses: actions/download-artifact@v5
+        with:
+          name: ruby
+      - name: Upload release asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }} 
+          asset_path: ruby-3.4.5-ohos-arm64.tar.gz
+          asset_name: ruby-3.4.5-ohos-arm64.tar.gz
+          asset_content_type: application/octet-stream
