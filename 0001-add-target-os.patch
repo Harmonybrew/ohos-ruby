@@ -1,0 +1,46 @@
+diff --git a/configure.ac b/configure.ac
+index fced42ebe9..7c8c21cd1a 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -573,6 +573,18 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+ ],
+ [AC_MSG_RESULT(no)])
+ 
++AC_MSG_CHECKING([whether it is OpenHarmony])
++AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
++    @%:@ifndef __OHOS__
++    @%:@error Not openharmony
++    @%:@endif
++]], [[]])],
++[
++    AC_MSG_RESULT(yes)
++    target_os=${target_os}-ohos
++],
++[AC_MSG_RESULT(no)])
++
+ AC_SUBST(RM, ['rm -f'])
+ AC_SUBST(CP, ['cp'])
+ RMDIRS='$(top_srcdir)/tool/rmdirs'
+@@ -1060,6 +1072,12 @@ AS_CASE(["$target_os"], [*android*], [
+ 	])
+ ])
+ 
++AS_CASE(["$target_os"], [*ohos*], [
++    AS_CASE(["$target_cpu"], [arm*], [
++        ac_cv_func___builtin_setjmp=no
++    ])
++])
++
+ AS_UNSET(ORIG_LIBS)
+ POSTLINK=:
+ AC_SUBST(POSTLINK)
+@@ -3885,6 +3903,9 @@ AS_IF([test "$cross_compiling" = no],
+         [*android*], [
+             YJIT_TARGET_OK=no
+         ],
++        [*ohos*], [
++            YJIT_TARGET_OK=no
++        ],
+         [arm64-darwin*|aarch64-darwin*|x86_64-darwin*], [
+             YJIT_TARGET_OK=yes
+         ],

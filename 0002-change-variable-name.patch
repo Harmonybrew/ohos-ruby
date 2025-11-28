@@ -1,0 +1,12 @@
+diff --git a/ext/openssl/lib/openssl.rb b/ext/openssl/lib/openssl.rb
+index 0889923890..ef05ff06f0 100644
+--- a/ext/openssl/lib/openssl.rb
++++ b/ext/openssl/lib/openssl.rb
+@@ -10,6 +10,7 @@
+   (See the file 'COPYING'.)
+ =end
+ 
++ENV["PORTABLE_RUBY_SSL_CERT_FILE"] = ENV["SSL_CERT_FILE"] || File.expand_path("/etc/ssl/certs/cacert.pem", RbConfig.ruby)
+ require 'openssl.so'
+ 
+ require_relative 'openssl/bn'
