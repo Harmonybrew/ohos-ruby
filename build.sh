@@ -30,8 +30,7 @@ rm -rf *.tar.gz
 ln -sf $(pwd)/*-ohos-arm64/bin/* /bin/
 
 # 准备 ohos-sdk
-echo "192.168.0.119 cidownload.openharmony.cn" > /etc/hosts
-curl -fL -o ohos-sdk-full_6.1-Release.tar.gz http://cidownload.openharmony.cn/version/Master_Version/OpenHarmony_6.1.0.31/20260311_020435/version-Master_Version-OpenHarmony_6.1.0.31-20260311_020435-ohos-sdk-full_6.1-Release.tar.gz
+curl -fL -o ohos-sdk-full_6.1-Release.tar.gz https://cidownload.openharmony.cn/version/Master_Version/OpenHarmony_6.1.0.31/20260311_020435/version-Master_Version-OpenHarmony_6.1.0.31-20260311_020435-ohos-sdk-full_6.1-Release.tar.gz
 tar -zxf ohos-sdk-full_6.1-Release.tar.gz
 rm -rf ohos-sdk-full_6.1-Release.tar.gz ohos-sdk/windows ohos-sdk/linux
 cd ohos-sdk/ohos
