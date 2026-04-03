@@ -45,7 +45,7 @@ export PATH=/data/ruby-4.0.1-ohos-arm64/bin:$PATH
 示例：
 ```sh
 cd /opt
-curl -fLO https://github.com/Harmonybrew/ohos-ruby/releases/download/4.0.1/tar-4.0.1-ohos-arm64.tar.gz
+curl -fLO https://github.com/Harmonybrew/ohos-ruby/releases/download/4.0.1/ruby-4.0.1-ohos-arm64.tar.gz
 tar -zxf ruby-4.0.1-ohos-arm64.tar.gz
 export PATH=/opt/ruby-4.0.1-ohos-arm64/bin:$PATH
 
