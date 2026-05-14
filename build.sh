@@ -7,8 +7,8 @@ WORKDIR=$(pwd)
 # 仅清理工作目录，不清理系统目录，因为默认用户每次使用新的容器进行构建（仓库中的构建指南是这么指导的）
 rm -rf *.tar.gz \
     deps \
-    ruby-4.0.1 \
-    ruby-4.0.1-ohos-arm64
+    ruby-4.0.3 \
+    ruby-4.0.3-ohos-arm64
 
 # 下载一些命令行工具，并将它们软链接到 bin 目录中
 cd /opt
@@ -144,14 +144,14 @@ cd $WORKDIR
 #    在压栈时要求严格的 16 字节对齐。这种偏差（4 字节错位）会导致 GC 在扫描栈时
 #    将非指针数据误认为有效地址并解引用，从而引发段错误。
 #    由于 OHOS 线程主栈通常为 8MB，足以承载信号处理，禁用 sigaltstack 可消除此类对齐歧义。
-curl -fLO https://cache.ruby-lang.org/pub/ruby/4.0/ruby-4.0.1.tar.gz
-tar -zxf ruby-4.0.1.tar.gz
-cd ruby-4.0.1
+curl -fLO https://cache.ruby-lang.org/pub/ruby/4.0/ruby-4.0.3.tar.gz
+tar -zxf ruby-4.0.3.tar.gz
+cd ruby-4.0.3
 patch -p1 < ../0001-add-target-os.patch
 patch -p1 < ../0002-implement-pthread_cancel-stub.patch
 autoconf
 ./configure \
-  --prefix=/opt/ruby-4.0.1-ohos-arm64 \
+  --prefix=/opt/ruby-4.0.3-ohos-arm64 \
   --host=aarch64-linux \
   --enable-load-relative \
   --with-static-linked-ext \
@@ -166,7 +166,7 @@ make install
 cd ..
 
 # 进行代码签名
-cd /opt/ruby-4.0.1-ohos-arm64
+cd /opt/ruby-4.0.3-ohos-arm64
 find . -type f \( -perm -0111 -o -name "*.so*" \) | while read FILE; do
     if file -b "$FILE" | grep -iqE "elf|sharedlib|ELF|shared object"; then
         echo "Signing binary file $FILE"
@@ -178,14 +178,14 @@ done
 cd $WORKDIR
 
 # 履行开源义务，把使用的开源软件的 license 全部聚合起来放到制品中
-cat <<EOF > /opt/ruby-4.0.1-ohos-arm64/licenses.txt
+cat <<EOF > /opt/ruby-4.0.3-ohos-arm64/licenses.txt
 This document describes the licenses of all software distributed with the
 bundled application.
 ==========================================================================
 
 ruby
 =============
-$(cat ruby-4.0.1/COPYING)
+$(cat ruby-4.0.3/COPYING)
 
 openssl
 =============
@@ -206,8 +206,8 @@ $(cat deps/libffi-3.5.2/LICENSE)
 EOF
 
 # 打包最终产物
-cp -r /opt/ruby-4.0.1-ohos-arm64 ./
-tar -zcf ruby-4.0.1-ohos-arm64.tar.gz ruby-4.0.1-ohos-arm64
+cp -r /opt/ruby-4.0.3-ohos-arm64 ./
+tar -zcf ruby-4.0.3-ohos-arm64.tar.gz ruby-4.0.3-ohos-arm64
 
 # 这一步是针对手动构建场景做优化。
 # 在 docker run --rm -it 的用法下，有可能文件还没落盘，容器就已经退出并被删除，从而导致压缩文件损坏。

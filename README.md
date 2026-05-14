@@ -17,9 +17,9 @@
 示例：
 ```sh
 cd ~
-curl -fLO https://github.com/Harmonybrew/ohos-ruby/releases/download/4.0.1/ruby-4.0.1-ohos-arm64.tar.gz
-tar -zxf ruby-4.0.1-ohos-arm64.tar.gz
-export PATH=~/ruby-4.0.1-ohos-arm64/bin:$PATH
+curl -fLO https://github.com/Harmonybrew/ohos-ruby/releases/download/4.0.3/ruby-4.0.3-ohos-arm64.tar.gz
+tar -zxf ruby-4.0.3-ohos-arm64.tar.gz
+export PATH=~/ruby-4.0.3-ohos-arm64/bin:$PATH
 
 # 现在可以使用 ruby 命令了
 ```
@@ -30,12 +30,12 @@ export PATH=~/ruby-4.0.1-ohos-arm64/bin:$PATH
 
 示例：
 ```sh
-hdc file send ruby-4.0.1-ohos-arm64.tar.gz /data
+hdc file send ruby-4.0.3-ohos-arm64.tar.gz /data
 hdc shell
 
 cd /data
-tar -zxf ruby-4.0.1-ohos-arm64.tar.gz
-export PATH=/data/ruby-4.0.1-ohos-arm64/bin:$PATH
+tar -zxf ruby-4.0.3-ohos-arm64.tar.gz
+export PATH=/data/ruby-4.0.3-ohos-arm64/bin:$PATH
 
 # 现在可以使用 ruby 命令了
 ```
@@ -47,9 +47,9 @@ export PATH=/data/ruby-4.0.1-ohos-arm64/bin:$PATH
 示例：
 ```sh
 cd /opt
-curl -fLO https://github.com/Harmonybrew/ohos-ruby/releases/download/4.0.1/ruby-4.0.1-ohos-arm64.tar.gz
-tar -zxf ruby-4.0.1-ohos-arm64.tar.gz
-export PATH=/opt/ruby-4.0.1-ohos-arm64/bin:$PATH
+curl -fLO https://github.com/Harmonybrew/ohos-ruby/releases/download/4.0.3/ruby-4.0.3-ohos-arm64.tar.gz
+tar -zxf ruby-4.0.3-ohos-arm64.tar.gz
+export PATH=/opt/ruby-4.0.3-ohos-arm64/bin:$PATH
 
 # 现在可以使用 ruby 命令了
 ```
