@@ -8,7 +8,7 @@ WORKDIR=$(pwd)
 rm -rf *.tar.gz \
     deps \
     ruby-4.0.6 \
-    ruby-4.0.6-ohos-arm64
+    ruby-4.0.6_1-ohos-arm64
 
 # 下载一些命令行工具，并将它们软链接到 bin 目录中
 cd /opt
@@ -130,14 +130,8 @@ cd $WORKDIR
 
 # 编译 ruby
 #
-# 注意：以下两个编译参数对于 OHOS (AArch64/musl) 环境下的稳定性至关重要：
-# 1. --with-coroutine=pthread
-#    显式使用 pthread 实现协程切换。
-#    原因：默认的 AArch64 汇编实现（context.S）在 OHOS 的 musl libc 环境下
-#    可能无法正确处理 PAC (Pointer Authentication Code) 机制或 BTI 保护，
-#    且容易因手动操作栈指针而产生非对齐访问。使用 pthread 可由 libc 保证上下文切换的安全性。
-#
-# 2. ac_cv_func_sigaltstack=no
+# 注意：这个编译参数对于 OHOS (AArch64/musl) 环境下的稳定性至关重要：
+# ac_cv_func_sigaltstack=no
 #    禁用备用信号栈 (sigaltstack)，强制 Ruby 使用主栈处理信号。
 #    原因：Ruby 的保守式 GC (Conservative GC) 会扫描栈空间。在 OHOS 的 musl libc 环境下，
 #    Ruby 默认通过 malloc 分配的信号栈可能仅满足 8 字节对齐，而 AArch64 信号帧 (ucontext_t)
@@ -148,17 +142,15 @@ curl -fLO https://cache.ruby-lang.org/pub/ruby/4.0/ruby-4.0.6.tar.gz
 tar -zxf ruby-4.0.6.tar.gz
 cd ruby-4.0.6
 patch -p1 < ../0001-add-target-os.patch
-patch -p1 < ../0002-implement-pthread_cancel-stub.patch
 autoconf
 ./configure \
-  --prefix=/opt/ruby-4.0.6-ohos-arm64 \
+  --prefix=/opt/ruby-4.0.6_1-ohos-arm64 \
   --host=aarch64-linux \
   --enable-load-relative \
   --with-static-linked-ext \
   --disable-install-doc \
   --disable-install-rdoc \
   --disable-install-capi \
-  --with-coroutine=pthread \
   --with-opt-dir=/opt/deps \
   ac_cv_func_sigaltstack=no
 make -j$(nproc)
@@ -166,7 +158,7 @@ make install
 cd ..
 
 # 进行代码签名
-cd /opt/ruby-4.0.6-ohos-arm64
+cd /opt/ruby-4.0.6_1-ohos-arm64
 find . -type f \( -perm -0111 -o -name "*.so*" \) | while read FILE; do
     if file -b "$FILE" | grep -iqE "elf|sharedlib|ELF|shared object"; then
         echo "Signing binary file $FILE"
@@ -178,7 +170,7 @@ done
 cd $WORKDIR
 
 # 履行开源义务，把使用的开源软件的 license 全部聚合起来放到制品中
-cat <<EOF > /opt/ruby-4.0.6-ohos-arm64/licenses.txt
+cat <<EOF > /opt/ruby-4.0.6_1-ohos-arm64/licenses.txt
 This document describes the licenses of all software distributed with the
 bundled application.
 ==========================================================================
@@ -206,8 +198,8 @@ $(cat deps/libffi-3.5.2/LICENSE)
 EOF
 
 # 打包最终产物
-cp -r /opt/ruby-4.0.6-ohos-arm64 ./
-tar -zcf ruby-4.0.6-ohos-arm64.tar.gz ruby-4.0.6-ohos-arm64
+cp -r /opt/ruby-4.0.6_1-ohos-arm64 ./
+tar -zcf ruby-4.0.6_1-ohos-arm64.tar.gz ruby-4.0.6_1-ohos-arm64
 
 # 这一步是针对手动构建场景做优化。
 # 在 docker run --rm -it 的用法下，有可能文件还没落盘，容器就已经退出并被删除，从而导致压缩文件损坏。
